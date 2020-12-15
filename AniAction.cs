@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -60,6 +60,7 @@ public class AniAction : MonoBehaviour
  
             
             transform.LookAt(getCapture.transform) ;
+            Debug.DrawLine(transform.position, getCapture.transform.position, Color.blue, 1);
             doAction("isRunning");
 
             }
@@ -186,18 +187,23 @@ public class AniAction : MonoBehaviour
 
 
 
-
-        foreach(string actionType in actionTypes)
+        if (animator!=null)
         {
-            if (actionType == doactionType )
+
+            foreach(string actionType in actionTypes)
             {
-                animator.SetBool(actionType,true);
+                if (actionType == doactionType )
+                {
+                    animator.SetBool(actionType,true);
+                }
+                else
+                {
+                   animator.SetBool(actionType,false);
+                }
             }
-            else
-            {
-                animator.SetBool(actionType,false);
-            }
+            
         }
+
 
 
 
