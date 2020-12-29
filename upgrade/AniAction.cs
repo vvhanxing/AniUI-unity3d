@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,6 +39,8 @@ public class AniAction : MonoBehaviour
     private Vector3 CapturePoint ;
     private float eatFreq = 3.0f;
     private float eatTime = 0.0f;
+
+    private GameObject collision_gameObject ;
 
     
 
@@ -207,7 +209,8 @@ public class AniAction : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-       if (collision.gameObject.tag=="wall" && getCapture ==null)
+       collision_gameObject = collision.gameObject;
+       if (collision_gameObject.tag=="wall" && getCapture ==null)
        {
 
             
@@ -227,7 +230,7 @@ public class AniAction : MonoBehaviour
 
             if (getCapture ==null)
             {
-               if (collision.gameObject.tag==gameObject.tag)
+               if (collision_gameObject.tag==gameObject.tag)
                {
            
                    notForwardAction();
@@ -236,11 +239,9 @@ public class AniAction : MonoBehaviour
         }
 
 
-        if (collision.gameObject.tag=="Player" )
+        if (collision_gameObject.tag=="Player" )
         {
 
-            //actionType = "isDead";
-            //doAction(actionType);
             HitWall = true;
         }
 
@@ -248,7 +249,7 @@ public class AniAction : MonoBehaviour
 
 
 
-       if (collision.gameObject ==getCapture)
+       if (collision_gameObject ==getCapture)
        {
 
            eat(getCapture);
@@ -263,17 +264,19 @@ public class AniAction : MonoBehaviour
 
     void OnCollisionStay(Collision collision)
     {
-       if (collision.gameObject.tag=="wall" && getCapture ==null)
+       collision_gameObject = collision.gameObject;
+       if (collision_gameObject.tag=="wall" && getCapture ==null)
        {
 
             if ( Vector3.Angle(new Vector3(0,1,0),collision.contacts[0].normal) >=80.0f )
             {
-                notForwardAction();
+                //notForwardAction();
+                transform.forward =  collision.contacts[0].normal;
             }
             
        }
 
-       if (collision.gameObject.tag=="wall" && getCapture !=null)
+       if (collision_gameObject.tag=="wall" && getCapture !=null)
        {
 
             if ( Vector3.Angle(new Vector3(0,1,0),collision.contacts[0].normal) >=80.0f )
@@ -292,7 +295,7 @@ public class AniAction : MonoBehaviour
 
             if (getCapture ==null)
             {
-               if (collision.gameObject.tag==gameObject.tag)
+               if (collision_gameObject.tag==gameObject.tag)
                {
            
                    notForwardAction();
@@ -301,7 +304,7 @@ public class AniAction : MonoBehaviour
         }
 
 
-       if (collision.gameObject ==getCapture)
+       if (collision_gameObject ==getCapture)
        {
            eat(getCapture);
            //change_action = true;
