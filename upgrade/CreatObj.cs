@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,9 +39,11 @@ public class CreatObj : MonoBehaviour
     public float[] ScaleRange =  new float[2]{1.0f,2.0f};
     public float[] RotateRange =  new float[2]{0.0f,90.0f};
     public float distanceFromMap = 0.0f;
+    public bool isCenter = false;
     //public float angle  =0.0f;
     float RandomRangeX = 0.0f;
     float RandomRangeZ = 0.0f;
+    public float rotateX = 0f;
 
     void Start()
     {
@@ -175,7 +177,7 @@ public class CreatObj : MonoBehaviour
                             //print(hit.collider.name);
                             creatObjs_layer =  creatObjs_layer1;
                             layer_isStacked = layer1_isStacked;     
-                            //print("-----------------------");
+                            //print(string.Format("-----------------------{0} {1}",i,j) );
                             //print(hit.collider.gameObject);
 
                             if (hit.collider.name!=mapObj.name &&dic_isStacked[hit.collider.gameObject]==true)
@@ -212,13 +214,30 @@ public class CreatObj : MonoBehaviour
                         if (creatObj!=null)
                         {
                             //print(hit.point);
-                            
-                            GameObject newCreatObj = Instantiate(creatObj, new Vector3(hit.point[0],hit.point[1]+distanceFromMap,hit.point[2]),transform.rotation);
                             float randomScale =  Random.Range(ScaleRange[0],ScaleRange[1]);
-                            newCreatObj.transform.localScale = new Vector3(randomScale,randomScale,randomScale);
-
                             float randomRotate  = Random.Range(RotateRange[0],RotateRange[1]);
-                            newCreatObj.transform.rotation = Quaternion.Euler(0,randomRotate,0);
+                            GameObject newCreatObj;
+
+                            if (isCenter!=true)
+                            {
+                                //print(string.Format("{0} ",hit.point[1]));
+                                creatObj.transform.localScale = new Vector3(randomScale,randomScale,randomScale);
+                                newCreatObj = Instantiate(creatObj, new Vector3(hit.point[0],hit.point[1]+distanceFromMap,hit.point[2]),Quaternion.Euler(rotateX,randomRotate,0));
+
+                            }
+                            else
+                            {
+                                //print(string.Format("{0}  {1}  {2}",randomScale,creatObj.transform.GetComponent<MeshFilter>().mesh.bounds.size.y,hit.point[1]));
+                                creatObj.transform.localScale = new Vector3(randomScale,randomScale,randomScale);
+                                newCreatObj = Instantiate(creatObj, new Vector3(hit.point[0],hit.point[1]+randomScale*0.5f*creatObj.transform.GetComponent<MeshFilter>().mesh.bounds.size.y+distanceFromMap,hit.point[2]),Quaternion.Euler(rotateX,randomRotate,0));
+
+                            }
+                            
+                            
+                            
+                            
+                            //newCreatObj.transform.rotation = ;
+                            //newCreatObj.transform.rotation = Quaternion.Euler(-90,0,0);
 
 
                             newCreatObj.transform.parent = creatObjsClass.transform;
