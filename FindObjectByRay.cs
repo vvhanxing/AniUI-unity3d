@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,10 +13,11 @@ public class FindObjectByRay : MonoBehaviour
     public float giveUpTime = 10f;
     public float giveUpTimeCount = 0.0f;
 
-    public float findObjDistance =30.0f;
+    public float findObjDistance =30.0f; //findObjDistance>giveUpDistance
 
     public string[] FindObjsClassName = new string[1] ;
-    //public GameObject[] FindObjsClass =new GameObject[1];
+
+    private Vector3 findObjDirection;
 
     
     private List<float> KnifeList;
@@ -25,7 +26,18 @@ public class FindObjectByRay : MonoBehaviour
     private float playerHight;
     private Vector3 PlayerPoint ;
     private Vector3 CapturePoint ;
+
+
+    private GameObject FindObjs;
+    private GameObject obj ;
+    private Vector3 objDirection;
+    private  float angle;
+
+
     //public DrawSector drawSector ;
+    private Vector3 newVecA;
+    private Vector3 newVecB;
+
     
 
     void Start()
@@ -53,14 +65,15 @@ public class FindObjectByRay : MonoBehaviour
         {
             CapturePoint = new Vector3(findObj.transform.position[0],transform.position[1]+playerHight,findObj.transform.position[2]);
 
-            Vector3 findObjDirection = CapturePoint - PlayerPoint;
+            findObjDirection = CapturePoint - PlayerPoint;
             findObjDistance = findObjDirection.magnitude;
             RaycastHit hitfindObj;
-            //if (findObjDistance>giveUpDistance && Physics.Raycast( transform.position, findObjDirection , out hitfindObj,distanceRange)==false)
-            //{
-                //findObj=null;
+
+            if (findObjDistance>giveUpDistance )
+            {
+                findObj=null;
  
-            //}
+            }
             
             if (Physics.Raycast( PlayerPoint, findObjDirection , out hitfindObj,distanceRange))
             {
@@ -80,6 +93,8 @@ public class FindObjectByRay : MonoBehaviour
                 }
 
             }
+
+
         }
         
     }    
@@ -100,12 +115,14 @@ public class FindObjectByRay : MonoBehaviour
         KnifeList = new List<float>();
         foreach (string FindObjName in FindObjsClassName)
         {
-            GameObject FindObjs = GameObject.Find(FindObjName);
+            FindObjs = GameObject.Find(FindObjName);
+            if (FindObjs!=null)
+            {
             for (int count =0;count < FindObjs.transform.childCount; count++)
             //foreach (GameObject obj in GameObject.FindGameObjectsWithTag(findObjTag)) 
             {
-                GameObject obj = FindObjs.transform.GetChild(count).gameObject;
-                Vector3 objDirection = obj.transform.position - PlayerPoint;
+                obj = FindObjs.transform.GetChild(count).gameObject;
+                objDirection = obj.transform.position - PlayerPoint;
                 float distance =  objDirection.magnitude;
 
                 RaycastHit hit;
@@ -120,7 +137,7 @@ public class FindObjectByRay : MonoBehaviour
                         {
                             //Debug.DrawLine(transform.position, obj.transform.position, Color.red, 1);
  
-                            float angle = Vector3.Angle (transform.forward, objDirection);                    
+                            angle = Vector3.Angle (transform.forward, objDirection);                    
                     
                             if (angle <=angleRange)
                             {
@@ -144,6 +161,9 @@ public class FindObjectByRay : MonoBehaviour
                 }
 
             }
+            
+            }
+
         }
         KnifeList.Sort();
         //print(string.Format("----> {0}",KnifeList));
@@ -153,8 +173,8 @@ public class FindObjectByRay : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Vector3 newVecA = Quaternion.AngleAxis(angleRange,new Vector3(0,1,0))*transform.forward;
-        Vector3 newVecB = Quaternion.AngleAxis(-angleRange,new Vector3(0,1,0))*transform.forward;
+        newVecA = Quaternion.AngleAxis(angleRange,new Vector3(0,1,0))*transform.forward;
+        newVecB = Quaternion.AngleAxis(-angleRange,new Vector3(0,1,0))*transform.forward;
 
         //Vector3 point = new Vector3(transform.position[0],transform.position[1]+playerHight,transform.position[2]);
         
